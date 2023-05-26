@@ -81,7 +81,7 @@ void led_pwm(uint8_t gpioNumber, bool PwmMode, bool LedOn){
 }
 
 void led_strip_configure(uint8_t gpioNumber, led_strip_handle_t led_strip){
-
+#ifdef CONFIG_BLINK_LED_RMT
 	    led_strip_config_t strip_config = {
 	        .strip_gpio_num = gpioNumber,
 	        .max_leds = 25,
@@ -91,6 +91,10 @@ void led_strip_configure(uint8_t gpioNumber, led_strip_handle_t led_strip){
 	    };
 	    ESP_ERROR_CHECK(led_strip_new_rmt_device(&strip_config, &rmt_config, &led_strip));
 	    led_strip_clear(led_strip);
+#elif CONFIG_BLINK_LED_GPIO
+	    gpio_reset_pin(gpioNumber);
+	    gpio_set_direction(gpioNumber, GPIO_MODE_OUTPUT);
+#endif
 }
 void led_strip_setLed(led_strip_handle_t led_strip, uint8_t gpioNumber, uint8_t mode, bool LedOn){
 	if(!LedOn){
@@ -121,8 +125,10 @@ void led_strip_setLed(led_strip_handle_t led_strip, uint8_t gpioNumber, uint8_t 
 		printf("Wrong Mode Entred!\n");
 		return;
 	}
+	for (int i = 0; i < 25; i += 1){
 	led_strip_set_pixel(led_strip, 24, RGB[0], RGB[1], RGB[2]);
-	        led_strip_refresh(led_strip);
+	led_strip_refresh(led_strip);
+	}
 }
 
 
