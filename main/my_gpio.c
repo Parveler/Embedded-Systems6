@@ -14,6 +14,7 @@
 void gpio_enable(uint8_t gpioNumber){
 	if(gpioNumber > 21){
 		printf("Gpio number is incorrect! There are only 21 Gpios available\n");
+		return;
 	}
 	gpioEnable |= (1 << gpioNumber);
 }
@@ -33,6 +34,7 @@ pIoMuxGpioReg->ioMuxGpioFunWpu = pIoMuxSettings->Pullup;
 void gpio_outEnable(uint8_t gpioNumber){
 	if(gpioNumber > 21){
 		printf("Gpio number is incorrect! There are only 21 Gpios available\n");
+		return;
 	}
 	gpioOutput |= (1 << gpioNumber);
 }
@@ -40,6 +42,7 @@ void gpio_outEnable(uint8_t gpioNumber){
 void gpio_outDisable(uint8_t gpioNumber){
 	if(gpioNumber > 21){
 		printf("Gpio number is incorrect! There are only 21 Gpios available\n");
+		return;
 	}
 	gpioOutput &= ~(1 << gpioNumber);
 }
@@ -48,6 +51,7 @@ void gpio_outDisable(uint8_t gpioNumber){
 void gpio_outToggle(uint8_t gpioNumber){
 	if(gpioNumber > 21){
 		printf("Gpio number is incorrect! There are only 21 Gpios available\n");
+		return;
 	}
 	gpioOutput ^= (1 << gpioNumber);
 }

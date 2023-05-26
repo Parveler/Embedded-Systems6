@@ -22,13 +22,13 @@
 #define ioMuxGpioReg(i) *((volatile uint32_t*) (IO_MUX_BASE | IO_MUX_OFFSET(i)))
 
 typedef struct IoMuxSettings{
-	uint8_t GpioNumber 			:5;
-	uint8_t PinFunc 			:1;
-	uint8_t PinCurrent  		:2;
-	uint8_t OutputConfigure 	:1;
-	uint8_t Pullup 				:1;
-	uint8_t Pulldown 			:1;
-	uint8_t RFU 				:2;
+	uint8_t GpioNumber 		;
+	uint8_t PinFunc 		;
+	uint8_t PinCurrent  	;
+	uint8_t OutputConfigure ;
+	uint8_t Pullup 			;
+	uint8_t Pulldown 		;
+	uint8_t RFU 			;
 }ConfigureIoMux_t;
 
 typedef union {
@@ -38,7 +38,7 @@ typedef union {
 		uint32_t ioMuxGpioMcuWpd   : 1;  //bit 2
 		uint32_t ioMuxGpioMcuWpu   : 1;  //bit 3
 		uint32_t ioMuxGpioMcuIe    : 1;  //bit 4
-		uint32_t ioMuxGpioMcuDrv   : 1;  //bits 5-6
+		uint32_t ioMuxGpioMcuDrv   : 2;  //bits 5-6
 		uint32_t ioMuxGpioFunWpd   : 1;  //bit 7
 		uint32_t ioMuxGpioFunWpu   : 1;  //bit 8
 		uint32_t ioMuxGpioFunIe    : 1;  //bit 9

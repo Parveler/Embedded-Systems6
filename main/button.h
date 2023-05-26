@@ -13,6 +13,7 @@
 #define MAIN_BUTTON_H_
 
 #define MS_TO_U(i) (i*1000)
+#define U_TO_MS(i) (i/1000)
 
 enum ButtonStates{
 	WaitForPress,

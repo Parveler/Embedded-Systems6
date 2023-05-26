@@ -25,10 +25,12 @@ bool button_getLevel(uint8_t gpioNumber){
 		return false;
 	}
 	bool ButtonLevelFirst = (gpioInput & (1 << gpioNumber));
-	usleep(MS_TO_U(10)); //waits 10 ms
-	bool ButtonLevelLast  = (gpioInput & (1 << gpioNumber));
-	if(ButtonLevelFirst == ButtonLevelLast){
-		return true;
+	if(ButtonLevelFirst){
+		usleep(MS_TO_U(10)); //waits 10 ms
+		bool ButtonLevelLast  = (gpioInput & (1 << gpioNumber));
+		if(ButtonLevelFirst == ButtonLevelLast){
+			return true;
+		}
 	}
 	return false;
 }
