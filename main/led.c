@@ -96,16 +96,17 @@ void led_strip_setLed(led_strip_handle_t* led_strip, uint8_t gpioNumber, uint8_t
 		led_strip_refresh(*led_strip);
 	}
 	enum rgb_e rgb;
-	uint8_t RGB[] = {0};
-	switch(mode){
-		case 0:
-			RGB[0] = 50;
+	rgb = mode;
+	uint8_t RGB[3] = {0};
+	switch(rgb){
+		case Red:
+			RGB[Red] = 50;
 			break;
-		case 1:
-			RGB[1] = 50;
+		case Green:
+			RGB[Green] = 50;
 			break;
-		case 2:
-			RGB[2] = 50;
+		case Blue:
+			RGB[Blue] = 50;
 			break;
 		default:
 			return;

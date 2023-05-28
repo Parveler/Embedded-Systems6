@@ -87,7 +87,7 @@ void app_main(void)
     		break;
     	case ShortPressDetected:
     		gMode += 1;
-    		if(gMode > 3){
+    		if(gMode > 2){
     			gMode = 0;
     		}
     		led_strip_setLed(&led_strip, BLINK_GPIO, gMode, gLedOn);
