@@ -15,7 +15,7 @@
 #define MS_TO_U(i) (i*1000)
 #define U_TO_MS(i) (i/1000)
 
-enum ButtonStates{
+enum buttonStates_e{
 	WaitForPress,
 	WaitForRelease,
 	WaitForAnotherPress,
@@ -26,7 +26,7 @@ enum ButtonStates{
 };
 
 
-void button_configure(ConfigureIoMux_t* pButtonSettings);
+void button_configure(configureIoMux_t* pButtonSettings);
 bool button_getLevel(uint8_t gpioNumber);
 
 

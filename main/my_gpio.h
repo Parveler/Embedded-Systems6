@@ -21,7 +21,7 @@
 #define IO_MUX_OFFSET(i) (0x4 + 4 * i)
 #define ioMuxGpioReg(i) *((volatile uint32_t*) (IO_MUX_BASE | IO_MUX_OFFSET(i)))
 
-typedef struct IoMuxSettings{
+typedef struct ioMuxSettings{
 	uint8_t GpioNumber 		;
 	uint8_t PinFunc 		;
 	uint8_t PinCurrent  	;
@@ -29,7 +29,7 @@ typedef struct IoMuxSettings{
 	uint8_t Pullup 			;
 	uint8_t Pulldown 		;
 	uint8_t RFU 			;
-}ConfigureIoMux_t;
+}configureIoMux_t;
 
 typedef union {
 	struct{
@@ -53,7 +53,7 @@ typedef union {
 
 
 void gpio_enable(uint8_t gpionumber);
-void gpio_iomuxConfigure(ConfigureIoMux_t* pIoMuxSettings);
+void gpio_iomuxConfigure(configureIoMux_t* pIoMuxSettings);
 void gpio_outEnable(uint8_t gpioNumber);
 void gpio_outDisable(uint8_t gpioNumber);
 void gpio_outToggle(uint8_t gpioNumber);

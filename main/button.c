@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-void button_configure(ConfigureIoMux_t* pButtonSettings){
+void button_configure(configureIoMux_t* pButtonSettings){
 	gpio_enable(pButtonSettings->GpioNumber);
 	gpio_iomuxConfigure(pButtonSettings);
 }

@@ -19,7 +19,7 @@ void gpio_enable(uint8_t gpioNumber){
 	gpioEnable |= (1 << gpioNumber);
 }
 
-void gpio_iomuxConfigure(ConfigureIoMux_t* pIoMuxSettings){
+void gpio_iomuxConfigure(configureIoMux_t* pIoMuxSettings){
 	if(pIoMuxSettings->GpioNumber > 21){
 		printf("Gpio number is incorrect! There are only 21 Gpios available\n");
 	}

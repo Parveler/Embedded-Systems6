@@ -11,37 +11,42 @@
 #include "esp_timer.h"
 #include "driver/ledc.h"
 #include "led_strip.h"
+#include "esp_attr.h"
 
 #define BUTTON 6
+#define BLINK_GPIO 8
+#define PWM_GPIO 4
 #define LONG_BUTTON_PRESS 1000
 #define WAIT_FOR_ANOTHER_SHORT_PRESS 300
 
 
 
-bool gPwmMode = true;
-bool gLedOn = true;
-uint8_t gMode = 1;
+/*RTC_NOINIT_ATTR*/ bool gPwmMode = true;
+/*RTC_NOINIT_ATTR*/ bool gLedOn = true;
+/*RTC_NOINIT_ATTR*/ uint8_t gMode = 0;
 
+led_strip_handle_t led_strip;
 void app_main(void)
 {
-	ConfigureIoMux_t IoMuxSettings;
-	IoMuxSettings.GpioNumber 		= 6;
-	IoMuxSettings.OutputConfigure 	= 1;
-	IoMuxSettings.PinCurrent 		= 2;
-	IoMuxSettings.PinFunc 			= 1;
-	IoMuxSettings.Pullup			= 0;
-	IoMuxSettings.Pulldown			= 0;
+	configureIoMux_t ioMuxSettings;
+	ioMuxSettings.GpioNumber 		= 6;
+	ioMuxSettings.OutputConfigure 	= 1;
+	ioMuxSettings.PinCurrent 		= 2;
+	ioMuxSettings.PinFunc 			= 1;
+	ioMuxSettings.Pullup			= 0;
+	ioMuxSettings.Pulldown			= 0;
 
-	button_configure(&IoMuxSettings);
+	button_configure(&ioMuxSettings);
 
-	static led_strip_handle_t led_strip;
-	led_strip_configure(8, led_strip);
-	led_strip_setLed(led_strip, 8, gMode, gLedOn);
 
-	enum ButtonStates buttonstate = WaitForPress;
-	uint64_t TimeButtonPressedBeginn = 0;
-	uint64_t TimeButtonPressed = 0;
-	uint64_t TimeButtonPressedReleased = 0;
+	enum buttonStates_e buttonstate = WaitForPress;
+	uint64_t timeButtonPressedBeginn = 0;
+	uint64_t timeButtonPressed = 0;
+	uint64_t timeButtonPressedReleased = 0;
+
+	led_strip_configure(BLINK_GPIO, &led_strip);
+	led_strip_setLed(&led_strip, BLINK_GPIO, gMode, gLedOn);
+	led_configure(PWM_GPIO);
 
     while (true) {
 
@@ -49,35 +54,34 @@ void app_main(void)
 
     	case WaitForPress:
     		if(button_getLevel(BUTTON)){
-    			TimeButtonPressedBeginn = esp_timer_get_time();
+    			timeButtonPressedBeginn = esp_timer_get_time();
     			buttonstate = WaitForRelease;
     		}
     		break;
 
     	case WaitForRelease:
-    		printf("NIOT IN LOOP\n");
     		if(button_getLevel(BUTTON) == false){
-    			printf(" IN LOOP\n");
-    			TimeButtonPressedReleased = esp_timer_get_time();
-    			TimeButtonPressed = TimeButtonPressedReleased -TimeButtonPressedBeginn;
-    			TimeButtonPressed = U_TO_MS(TimeButtonPressed);
-    			printf("TIME:%"PRIu64"\n",TimeButtonPressed);
+    			timeButtonPressedReleased = esp_timer_get_time();
+    			timeButtonPressed = timeButtonPressedReleased -timeButtonPressedBeginn;
+    			timeButtonPressed = U_TO_MS(timeButtonPressed);
+    			printf("TIME pressed:%"PRIu64"\n",timeButtonPressed);
+    			if(timeButtonPressed < LONG_BUTTON_PRESS){
+    				buttonstate = WaitForAnotherPress;
+    			}
+    			else{
+    			    buttonstate = LongPressDetected;
+    			}
     		}
-    		if(TimeButtonPressed < LONG_BUTTON_PRESS){
-    			buttonstate = WaitForAnotherPress;
-    		}
-    		else{
-    			buttonstate = LongPressDetected;
-    		}
+
     		break;
     	case WaitForAnotherPress:
-    		TimeButtonPressedBeginn = esp_timer_get_time();
-    		TimeButtonPressed = TimeButtonPressedBeginn -TimeButtonPressedReleased;
-    		TimeButtonPressed = U_TO_MS(TimeButtonPressed);
-    		if(TimeButtonPressed < WAIT_FOR_ANOTHER_SHORT_PRESS && button_getLevel(BUTTON)){
+    		timeButtonPressedBeginn = esp_timer_get_time();
+    		timeButtonPressed = timeButtonPressedBeginn -timeButtonPressedReleased;
+    		timeButtonPressed = U_TO_MS(timeButtonPressed);
+    		if(timeButtonPressed < WAIT_FOR_ANOTHER_SHORT_PRESS && button_getLevel(BUTTON)){
     		    buttonstate = DoubleShortPressDetected;
     		}
-    		else if(TimeButtonPressed > WAIT_FOR_ANOTHER_SHORT_PRESS){
+    		else if(timeButtonPressed > WAIT_FOR_ANOTHER_SHORT_PRESS){
     		    buttonstate = ShortPressDetected;
     		}
     		break;
@@ -86,19 +90,26 @@ void app_main(void)
     		if(gMode > 3){
     			gMode = 0;
     		}
-    		led_strip_setLed(led_strip, 8, gMode, gLedOn);
-
+    		led_strip_setLed(&led_strip, BLINK_GPIO, gMode, gLedOn);
+    		printf("Short press detected\n");
+    		buttonstate = WaitForPress;
     		break;
     	case LongPressDetected:
-    		led_pwm(4, gPwmMode, gLedOn);
+    		led_pwm(PWM_GPIO, gPwmMode, gLedOn);
     		gPwmMode = !gPwmMode;
     		printf("Long button press detected!\n");
     		buttonstate = WaitForPress;
     		break;
     	case DoubleShortPressDetected:
     		gLedOn = !gLedOn;
+    		led_pwm(PWM_GPIO, gPwmMode, gLedOn);
+    		led_strip_setLed(&led_strip, BLINK_GPIO, gMode, gLedOn);
+    		printf("Double short press detected\n");
+    		buttonstate = WaitForPress;
     		break;
     	default:
+    		printf("Error occurred, button state is resetting...\n");
+    		buttonstate = WaitForPress;
     		break;
     	}
         usleep(MS_TO_U(50));
