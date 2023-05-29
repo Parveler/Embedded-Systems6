@@ -21,9 +21,9 @@
 
 
 
-/*RTC_NOINIT_ATTR*/ bool gPwmMode = true;
-/*RTC_NOINIT_ATTR*/ bool gLedOn = true;
-/*RTC_NOINIT_ATTR*/ uint8_t gMode = 0;
+RTC_NOINIT_ATTR bool gPwmMode = true;	//Stores Variables in RTCNOINIT Memory
+RTC_NOINIT_ATTR bool gLedOn = true;
+RTC_NOINIT_ATTR uint8_t gMode = 0;
 
 led_strip_handle_t led_strip;
 void app_main(void)

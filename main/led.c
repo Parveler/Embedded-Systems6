@@ -21,6 +21,7 @@
 
 
 void led_configure(uint8_t gpioNumber){
+	//configures LEDC Module
 	if(gpioNumber > 21){
 			printf("Gpio number is incorrect! There are only 21 Gpios available\n");
 	}
